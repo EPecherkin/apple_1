@@ -14,3 +14,5 @@ services:
     ports:
       - 3000:3000
     env_file: ".env"
+    environment:
+      MONGO_DB_URI: "mongodb://apple_weather_db:27017/apple_weather_development"
