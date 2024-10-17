@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mongo:8
+    container_name: apple_weather_db
+    ports:
+      - 27017:27017
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+
+  app:
+    image: apple_wather
+    container_name: apple_weather
+    build: .
+    ports:
+      - 3000:3000
+    env_file: ".env"
