@@ -29,3 +29,5 @@ group :test do
   gem "factory_bot_rails", "~> 6.4"
   gem "webmock", "~> 3.24"
 end
+
+gem "roo", "~> 2.10"

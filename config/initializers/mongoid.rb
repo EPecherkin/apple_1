@@ -6,6 +6,8 @@ Mongoid.configure do
   # features flags (refer to documentation)
   config.load_defaults target_version
 
+  config.raise_not_found_error = false
+
   # It is recommended to use config/mongoid.yml for most Mongoid-related
   # configuration, whenever possible, but if you prefer, you can set
   # configuration values here, instead:
