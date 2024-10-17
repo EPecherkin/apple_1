@@ -1,0 +1,20 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Weather broadcast" %>
+
+<h1>Weather broadcast</h1>
+
+<div id="location">
+  <%= form_with url: '/', method: :get do |form| %>
+    <%= form.text_field :location, value: @location, placeholder: 'Type your location' %>
+    <%= form.submit "Check weather", name: nil %>
+  <% end %>
+</div>
+
+<% if @forecast&.any? %>
+  <div name="forecast">
+    <% @forecast.each do |weather| %>
+      <%= render "weather", weahter: %>
+    <% end %>
+  </div>
+<% end %>

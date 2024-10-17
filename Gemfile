@@ -3,8 +3,11 @@ source "https://rubygems.org"
 gem "rails", "~> 7.2.1", ">= 7.2.1.1"
 
 gem "sprockets-rails"
-gem "importmap-rails"
+gem "jsbundling-rails"
+gem "cssbundling-rails"
 gem "puma", ">= 5.0"
+gem "bootsnap", require: false
+gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 gem "mongoid", "~> 9.0"
 gem "ostruct", "~> 0.6.0"
@@ -12,7 +15,6 @@ gem "ostruct", "~> 0.6.0"
 gem "httparty", "~> 0.22.0"
 
 group :development, :test do
-  gem "bootsnap", require: false
   gem "brakeman", require: false
 
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

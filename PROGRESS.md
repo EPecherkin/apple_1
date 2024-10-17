@@ -12,7 +12,7 @@
 The app has been generated as
 
 ```
-rails new . --name=apple_weather --database=postgresql -M --skip-action-mailbox --skip-action-text --skip-active-job --skip-active-storage --skip-action-cable --skip-hotwire --skip-jbuilder --skip-devcontainer --skip-ci
+rails new . --name=apple_weather --database=postgresql -M --skip-action-mailbox --skip-action-text --skip-active-job --skip-active-storage --skip-action-cable --skip-hotwire --skip-jbuilder --skip-devcontainer --skip-ci -j esbuild --css bootstrap
 ```
 
 Parts:
