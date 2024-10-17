@@ -1,4 +1,4 @@
-module Forecast
+module Weathers
   class Fetch < ApplicationServiceObject
     attribute :location, :string
 
@@ -18,7 +18,7 @@ module Forecast
       current = response['current']
       forecast = response['forecast']
 
-require 'debug'; debugger
+# require 'debug'; debugger
       []
     end
   end

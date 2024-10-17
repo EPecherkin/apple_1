@@ -3,6 +3,6 @@ class Weather
   include Mongoid::Timestamps
 
   field :current, type: Hash
-  field :forecast, type: Hash
+  field :future, type: Hash
   belongs_to :location
 end

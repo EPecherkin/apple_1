@@ -6,7 +6,7 @@ class WeatherApi
 
   class << self
     def forecast(location, days: 1, aqi: false, alerts: false)
-      query = { 
+      query = {
         days:,
         q: location,
         key: KEY,
