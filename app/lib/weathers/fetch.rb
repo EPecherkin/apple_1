@@ -4,14 +4,18 @@ module Weathers
     attribute :region, :string
     attribute :country, :string
 
-    validates :name, presence: true
+    validates :name, presence: true, length: { minimum: 2, maximum: MAX_NAME_LEN }
+    validates :region, allow_blank: true, length: { minimum: 2, maximum: MAX_NAME_LEN }
+    validates :country, allow_blank: true, length: { minimum: 2, maximum: MAX_NAME_LEN }
 
-    DAYS = 3
+    MAX_NAME_LEN = 100
+    DAYS = 7
 
     def call!
       validate!
 
-      if weather_cached?
+      # Weather is cached for 30 minutes and automatically cleaned by DB
+      if location&.weather
         return [ location.weather, location, true ]
       end
 
@@ -30,10 +34,6 @@ module Weathers
       @location = Location.find_by(**{ name:, region:, country: }.compact)
     end
 
-    def weather_cached?
-      location && location.weather&.actual?
-    end
-
     def fetch_location_and_weather
       query = if location
         LocationDecorator.new(location).view
@@ -44,12 +44,12 @@ module Weathers
       response = WeatherApi.forecast(query, days: DAYS)
 
       location_hash = response["location"]
-        .slice(*%w[name region country])
+        .slice(*%w[name region country]).select { |_, v| v.present? }
 
       current = response["current"]
       forecast = response["forecast"]["forecastday"]
 
-      return [location_hash, current, forecast]
+      [ location_hash, current, forecast ]
     end
 
     def actualize_location!(location_hash)

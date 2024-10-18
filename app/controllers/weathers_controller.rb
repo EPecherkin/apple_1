@@ -4,18 +4,31 @@ class WeathersController < ApplicationController
 
     if location_query.present?
       location_data = LocationDecorator.parse(location_query)
-      @weather, location = Weathers::Fetch.new(**location_data).call!
+      @weather, location, cached = Weathers::Fetch.new(**location_data).call!
+      @location = LocationDecorator.new(location)
 
-      proper_location_query = LocationDecorator.new(location).query
-      if location_query != proper_location_query
-        redirect_to root_path(l: proper_location_query)
-        return
+      if cached
+        flash.notice = "CACHED"
       end
     end
+  end
 
-    @location_query = location_query
-    @locations = Location.all.map do |loc|
-      LocationDecorator.new(loc)
+  def search
+    term = params[:term]
+    if !term || term.length > Weathers::Fetch::MAX_NAME_LEN
+      render json: []
+      return
     end
+
+    parts = term.split(/\ |,/).compact
+
+    regex = /#{parts.join('|')}/i
+
+    locations = Location
+      .any_of({ name: regex }, { region: regex }, { country: regex })
+      .order_by(name: :asc, region: :asc, coyntry: :asc)
+    result = locations.map { |l| LocationDecorator.new(l) }.map(&:to_json)
+
+    render json: { result: }
   end
 end

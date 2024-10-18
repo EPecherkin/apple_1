@@ -7,5 +7,4 @@ class Location
   field :country, type: String
 
   has_one :weather
-  has_one :ip
 end

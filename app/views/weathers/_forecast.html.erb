@@ -1,4 +1,25 @@
-<div name="forecast">
-  <%= f['date'] %>
-  <%= f['day']['maxtemp_c'] %>
+<div name="forecast" class="container">
+  <div class="row">
+    <div class="col-12">
+      <%= Date.parse(f['date']).strftime("%e %b %y") %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <img src="<%= f['day']['condition']['icon'] %>"></img>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div>
+        <%= f['day']['condition']['text'] %>
+      </div>
+      <div>
+        <%= f['day']['mintemp_f'] %> - <%= f['day']['maxtemp_f'] %> °F
+      </div>
+      <div>
+        <%= f['day']['maxwind_mph'] %> mph
+      </div>
+    </div>
+  </div>
 </div>

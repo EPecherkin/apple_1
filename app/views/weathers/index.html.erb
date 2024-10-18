@@ -1,41 +1,57 @@
-<p style="color: green"><%= notice %></p>
-
-<% content_for :title, "Weather broadcast" %>
-
 <% content_for :head do %>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <% end %>
 
-<div class="container">
-  <h1>Weather broadcast</h1>
+<p style="color: green"><%= notice %></p>
 
-  <div class="row">
-    <div id="location">
-      <%= form_with url: '/', method: :get do |form| %>
-        <%= form.collection_select :l, @locations, :query, :view, { selected: @location_query, include_blank: true }, { class: 'form-select' } %>
-        <%= form.submit "Check weather", name: nil %>
+<% content_for :title, "Weather at" %>
+
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-3">
+      <h1>Weather at</h1>
+    </div>
+    <div id="location" class="col-3 mt-3">
+      <%= form_with url: '/', method: :get, id: "location_selection_form" do |form| %>
+        <%= form.collection_select :l, [@location], :query, :view, { selected: @location.query }, { class: 'form-select' } %>
       <% end %>
       <script>
         $(document).ready(function () {
           $("#l").select2({
             placeholder: 'Select your location',
-            allowClear: true,
             tags: true,
+            insertTag: function (data, tag) {
+              // Insert the tag at the end of the results
+              data.push(tag);
+            },
+            maximumInputLength: "<%= Weathers::Fetch::MAX_NAME_LEN %>",
+            ajax: {
+              url: "<%= search_weathers_path %>",
+              dataType: 'json',
+              processResults: function (data, _) {
+                return {
+                  results: data.result.map((l) => ({id: l.query, text: l.view})),
+                };
+              },
+            },
+          }).change(function() {
+            $(this).closest('form').submit();
           });
-        })
+          window.history.pushState({}, '', '/?l=<%= @location.query %>');
+        });
       </script>
     </div>
   </div>
 
   <% if @weather %>
-    <div class="row">
+    <div class="row mb-3">
       <div class="col">
         <%= render "weather", w: @weather.current %>
       </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
       <% @weather.forecast.each do |f| %>
         <div class="col">
           <%= render "forecast", f: %>

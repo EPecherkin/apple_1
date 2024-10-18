@@ -10,4 +10,10 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   root "weathers#index"
+
+  resource :weathers, only: [] do
+    collection do
+      get :search
+    end
+  end
 end

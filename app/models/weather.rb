@@ -9,7 +9,6 @@ class Weather
 
   CACHE_DURATION = 30.minutes
 
-  def actual?
-    updated_at < 30.minutes.ago
-  end
+  # MongoDB feature to automatically clean expired documents
+  index({ created_at: 1 }, { expire_after_seconds: CACHE_DURATION })
 end
