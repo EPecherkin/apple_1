@@ -2,23 +2,44 @@
 
 <% content_for :title, "Weather broadcast" %>
 
+<% content_for :head do %>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<% end %>
+
 <div class="container">
   <h1>Weather broadcast</h1>
 
   <div class="row">
     <div id="location">
       <%= form_with url: '/', method: :get do |form| %>
-        <%= form.text_field :location, value: @location, placeholder: 'Type your location' %>
+        <%= form.collection_select :l, @locations, :query, :view, selected: @location, placeholder: 'Select your location' %>
         <%= form.submit "Check weather", name: nil %>
       <% end %>
+      <script>
+        $(document).ready(function () {
+          $("#l").select2({
+            placeholder: 'Select your location',
+            allowClear: true,
+            tags: true
+            // theme: "bootstrap"
+          });
+        })
+      </script>
     </div>
   </div>
 
-  <% if @weathers&.any? %>
+  <% if @weather %>
     <div class="row">
-      <% @weathers.each do |weather| %>
+      <div class="col">
+        <%= render "weather", w: @weather.current %>
+      </div>
+    </div>
+    <div class="row">
+      <% @weather.forecast.each do |f| %>
         <div class="col">
-          <%= render "weather", weahter: %>
+          <%= render "forecast", f: %>
         </div>
       <% end %>
     </div>
