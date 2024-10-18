@@ -14,7 +14,7 @@
   <div class="row">
     <div id="location">
       <%= form_with url: '/', method: :get do |form| %>
-        <%= form.collection_select :l, @locations, :query, :view, selected: @location, placeholder: 'Select your location' %>
+        <%= form.collection_select :l, @locations, :query, :view, { selected: @location_query, include_blank: true }, { class: 'form-select' } %>
         <%= form.submit "Check weather", name: nil %>
       <% end %>
       <script>
@@ -22,8 +22,7 @@
           $("#l").select2({
             placeholder: 'Select your location',
             allowClear: true,
-            tags: true
-            // theme: "bootstrap"
+            tags: true,
           });
         })
       </script>

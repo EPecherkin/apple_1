@@ -11,12 +11,30 @@ module Weathers
     def call!
       validate!
 
-      location = Location.find_by(**{ name:, region:, country: }.compact)
-
-      if location && location.weather&.actual?
-        return [ location.weather, location ]
+      if weather_cached?
+        return [ location.weather, location, true ]
       end
 
+      location_hash, current, forecast = fetch_location_and_weather
+
+      actualize_location!(location_hash)
+      actualize_weather!(current, forecast)
+
+      [ location.weather, location, false ]
+    end
+
+    private
+
+    def location
+      return @location if defined?(@location)
+      @location = Location.find_by(**{ name:, region:, country: }.compact)
+    end
+
+    def weather_cached?
+      location && location.weather&.actual?
+    end
+
+    def fetch_location_and_weather
       query = if location
         LocationDecorator.new(location).view
       else
@@ -28,23 +46,26 @@ module Weathers
       location_hash = response["location"]
         .slice(*%w[name region country])
 
-      if !location
-        location = Location.create!(name:, region:, country:)
-      elsif location.attributes.slice(*%w[name region country]) != location_hash
-        location.update!(**location_hash)
-      end
-
       current = response["current"]
       forecast = response["forecast"]["forecastday"]
 
-      weather = if location.weather
-        location.weather.update!(current:, forecast:)
-        location.weather
-      else
-        Weather.create!(location:, current:, forecast:)
-      end
+      return [location_hash, current, forecast]
+    end
 
-      [ weather, location ]
+    def actualize_location!(location_hash)
+      if !location
+        @location = Location.create!(**location_hash)
+      elsif location.attributes.slice(*%w[name region country]) != location_hash
+        location.update!(**location_hash)
+      end
+    end
+
+    def actualize_weather!(current, forecast)
+      if location.weather
+        location.weather.update!(current:, forecast:)
+      else
+        location.weather = Weather.create!(location:, current:, forecast:)
+      end
     end
   end
 end
