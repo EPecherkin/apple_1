@@ -11,21 +11,21 @@ module Weathers
     def call!
       validate!
 
-      location = Location.find_by(**{name:, region:, country:}.compact)
+      location = Location.find_by(**{ name:, region:, country: }.compact)
 
       if location && location.weather&.actual?
-        return [location.weather, location]
+        return [ location.weather, location ]
       end
 
       query = if location
         LocationDecorator.new(location).view
       else
-        [name, region, country].compact.join(',')
+        [ name, region, country ].compact.join(",")
       end
 
       response = WeatherApi.forecast(query, days: DAYS)
 
-      location_hash = response['location']
+      location_hash = response["location"]
         .slice(*%w[name region country])
 
       if !location
@@ -34,8 +34,8 @@ module Weathers
         location.update!(**location_hash)
       end
 
-      current = response['current']
-      forecast = response['forecast']['forecastday']
+      current = response["current"]
+      forecast = response["forecast"]["forecastday"]
 
       weather = if location.weather
         location.weather.update!(current:, forecast:)
@@ -44,7 +44,7 @@ module Weathers
         Weather.create!(location:, current:, forecast:)
       end
 
-      [weather, location]
+      [ weather, location ]
     end
   end
 end

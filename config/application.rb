@@ -28,7 +28,7 @@ module AppleWeather
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    config.autoload_paths += %W(#{config.root}/app/decorators)
+    config.autoload_paths += %W[#{config.root}/app/decorators]
 
     # Configuration for the application, engines, and railties goes here.
     #
